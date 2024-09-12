@@ -108,4 +108,88 @@ wait(1)
 end
 end
 
+humanoid:MoveTo(npc.HumanoidRootPart.Position)
+wait(0.1)
+character:FindFirstChildOfClass("Tool"):Activate()
+wait(0.1)
+end
+end
 
+weaponDropdown.MouseButton1Click:Connect(function()
+dropdownOptions.Visible = not dropdownOptions.Visible
+end)
+
+while true do
+local npc = findClosestNPC()
+if npc and weaponDropdown.Text ~= "godhuman" then
+equipWeapon(weaponDropdown.Text)
+attackNPC(npc)
+else
+wait(1)
+end
+end
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local ui = Instance.new("ScreenGui", player.PlayerGui)
+local frame = Instance.new("Frame", ui)
+local weaponDropdown = Instance.new("TextButton", frame)
+local dropdownOptions = Instance.new("Frame", weaponDropdown)
+
+frame.Position = UDim2.new(0.5, -100, 0.5, -25)
+frame.Size = UDim2.new(0, 200, 0, 50)
+weaponDropdown.Size = UDim2.new(1, 0, 1, 0)
+weaponDropdown.Text = "Chọn vũ khí"
+dropdownOptions.Size = UDim2.new(1, 0, 0, #weaponList * 25)
+dropdownOptions.Position = UDim2.new(0, 0, 1, 0)
+dropdownOptions.Visible = false
+
+local weaponList = {"Sword", "Gun", "Godhuman"} 
+local buttons = {}
+
+for i, weaponName in ipairs(weaponList) do
+local button = Instance.new("TextButton", dropdownOptions)
+button.Size = UDim2.new(1, 0, 0, 25)
+button.Position = UDim2.new(0, 0, 0, (i - 1) * 25)
+button.Text = weaponName
+table.insert(buttons, button)
+end
+
+-- Khi chọn vũ khí
+for _, button in ipairs(buttons) do
+button.MouseButton1Click:Connect(function()
+weaponDropdown.Text = button.Text
+dropdownOptions.Visible = false
+end)
+end
+
+local function equipWeapon(weaponName)
+local tool = player.Backpack:FindFirstChild(weaponName)
+if tool then
+character.Humanoid:EquipTool(tool)
+end
+end
+
+local function findClosestNPC()
+local closestNPC = nil
+local shortestDistance = math.huge
+
+for _, npc in pairs(game.Workspace.Enemies:GetChildren()) do
+if npc:FindFirstChild("HumanoidRootPart") and npc.Humanoid.Health > 0 then
+local distance = (character.HumanoidRootPart.Position - npc.HumanoidRootPart.Position).Magnitude
+if distance < shortestDistance then
+closestNPC = npc
+shortestDistance = distance
+end
+end
+end
+
+return closestNPC
+end
+
+local function attackNPC(npc)
+while humanoid.Health > 0 and npc.Humanoid.Health > 0 do
+end
+end
